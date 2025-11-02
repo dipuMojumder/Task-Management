@@ -2,6 +2,7 @@ const express = require('express');
 const app = express();
 const port = 3000;
 
+
 const tasks = [
   { id: 1, title: 'Learn Node.js', completed: false, priority: 'high', createdAt: new Date() },
   { id: 2, title: 'Build Express API', completed: false, priority: 'medium', createdAt: new Date() },
@@ -10,13 +11,24 @@ const tasks = [
   { id: 5, title: 'Push Project to GitHub', completed: true, priority: 'high', createdAt: new Date() }
 ];
 
+
 app.get('/', (req, res) => {
   res.send('Task Management API is running!');
 });
 
+
 app.get('/tasks', (req, res) => {
   res.json(tasks);
 });
+
+
+app.get('/health', (req, res) => {
+  res.json({
+    status: 'healthy',
+    uptime: process.uptime()
+  });
+});
+
 
 app.listen(port, () => {
   console.log(`Server running at http://localhost:${port}`);
