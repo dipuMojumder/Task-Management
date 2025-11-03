@@ -2,6 +2,11 @@ const express = require('express');
 const router = express.Router();
 
 // Sample tasks
+// Add this at the top, after `const router = express.Router();`
+router.get('/', (req, res) => {
+  res.json({ message: "Welcome to Task Management API" });
+});
+
 let tasks = [
   { id: 1, title: "Task 1", completed: false, priority: "low", createdAt: new Date() },
   { id: 2, title: "Task 2", completed: true, priority: "medium", createdAt: new Date() },
@@ -39,5 +44,6 @@ router.get('/health', (req, res) => {
     uptime: process.uptime()
   });
 });
+
 
 module.exports = router;
