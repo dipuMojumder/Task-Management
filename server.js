@@ -5,6 +5,9 @@ const app = express();
 const PORT = 3000;
 
 app.use(express.json());
+app.use("/task", taskRouter);  // handles /task/:id
+app.use("/tasks", taskRouter); // handles /tasks
+
 
 // 5 tasks from Assignment 1
 app.locals.tasks = [
