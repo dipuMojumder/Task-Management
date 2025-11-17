@@ -7,24 +7,32 @@ router.get("/", (req, res) => {
   res.json({ success: true, data: tasks });
 });
 
-// GET /task/:id → return one task by ID
+// GET /task/:id → return one task by ID with error handling
 router.get("/:id", (req, res) => {
   const id = Number(req.params.id);
 
-  // Invalid ID format → Assignment 5
+  // INVALID ID FORMAT → 400
   if (!Number.isInteger(id) || id <= 0) {
-    return res.status(400).json({ error: "Invalid ID format" });
+    return res.status(400).json({
+      error: "Invalid ID format"
+    });
   }
 
   const tasks = req.app.locals.tasks;
   const task = tasks.find(t => t.id === id);
 
-  // Task not found → return 404
+  // TASK NOT FOUND → 404
   if (!task) {
-    return res.status(404).json({ error: "Task not found" });
+    return res.status(404).json({
+      error: "Task not found"
+    });
   }
 
-  res.json({ success: true, data: task });
+  // SUCCESS → return task
+  return res.status(200).json({
+    success: true,
+    data: task
+  });
 });
 
 module.exports = router;
