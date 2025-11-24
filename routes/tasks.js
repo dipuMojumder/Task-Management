@@ -6,43 +6,27 @@ const db = require('../config/db');
 // GET all tasks
 // ------------------------------------------
 // GET tasks with pagination
+// GET all tasks with optional search
 router.get('/', async (req, res) => {
     try {
-        // Read query parameters
-        let { page = 1, limit = 10 } = req.query;
+        const search = req.query.q; // ?q=learn
 
-        // Convert to number
-        page = parseInt(page);
-        limit = Math.min(parseInt(limit), 50);  // max 50
+        let sql = "SELECT * FROM tasks WHERE deleted_at IS NULL";
+        let params = [];
 
-        const offset = (page - 1) * limit;
+        if (search) {
+            sql += " AND LOWER(title) LIKE ?";
+            params.push(`%${search.toLowerCase()}%`);
+        }
 
-        // 1️⃣ Count total tasks
-        const [countResult] = await db.query(
-            "SELECT COUNT(*) AS total FROM tasks WHERE deleted_at IS NULL"
-        );
-        const totalTasks = countResult[0].total;
+        sql += " ORDER BY created_at DESC";
 
-        // 2️⃣ Get tasks for current page
-        const [rows] = await db.query(
-            "SELECT * FROM tasks WHERE deleted_at IS NULL ORDER BY created_at DESC LIMIT ? OFFSET ?",
-            [limit, offset]
-        );
-
-        const totalPages = Math.ceil(totalTasks / limit);
-
-        // 3️⃣ Return pagination metadata + data
-        res.json({
-            totalTasks,
-            totalPages,
-            currentPage: page,
-            limit,
-            data: rows
-        });
+        const [rows] = await db.query(sql, params);
+        res.json(rows);
 
     } catch (err) {
         console.error(err);
-        res.status(500).json({ error: "Database error" });
+        res.status(500).json({ error: 'Database error' });
     }
 });
 
